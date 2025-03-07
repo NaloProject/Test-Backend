@@ -20,11 +20,11 @@ from django.urls import include, path
 
 from icecream_api import urls as icecream_api_urls
 
-# from icecream_view import urls as icecream_view_urls
+from icecream_view import urls as icecream_view_urls
 
 urlpatterns = [
     path("adminUser/", admin.site.urls),
     path("api-auth/", include("rest_framework.urls")),
     path("icecream.api.v1/", include(icecream_api_urls)),
-    #    path("", include(icecream_view_urls)),
+    path("", include(icecream_view_urls)),
 ]

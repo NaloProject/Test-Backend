@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "icecream_api",
-    # "icecream_view",
+    "icecream_view",
 ]
 
 MIDDLEWARE = [
