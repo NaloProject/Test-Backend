@@ -8,12 +8,9 @@ from icecream_api.models.item_related import Item
 from ..serializers import ItemSerializer
 
 
-class ItemListApiView(APIView):
+class ItemsListApiView(APIView):
 
     def get(self, request, *args, **kwargs):
-        """
-        List all the todo items for given requested user
-        """
         item = Item.objects.filter()
         serializer = ItemSerializer(item, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -22,9 +19,6 @@ class ItemListApiView(APIView):
 class ItemDetailApiView(APIView):
 
     def get_object(self, item_id):
-        """
-        Helper method to get the object with given todo_id, and user_id
-        """
         try:
             return Item.objects.get(id=item_id)
         except Item.DoesNotExist:
@@ -33,14 +27,11 @@ class ItemDetailApiView(APIView):
             return None
 
     def get(self, request, item_id, *args, **kwargs):
-        """
-        Retrieves the Item with given item_id
-        """
         item_instance = self.get_object(item_id)
         if not item_instance:
             return Response(
-                {"res": "Object with todo id does not exists"},
-                status=status.HTTP_400_BAD_REQUEST,
+                {"res": "Object with item id does not exists"},
+                status=status.HTTP_404_NOT_FOUND,
             )
 
         serializer = ItemSerializer(item_instance)

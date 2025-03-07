@@ -1,9 +1,6 @@
-from django.db import IntegrityError
 from django.test import TestCase
 
 from icecream_api.models.item_related import Batch, Item
-
-# Create your tests here.
 
 
 class BatchTestCase(TestCase):

@@ -1,7 +1,5 @@
 import uuid
-
 from django.db import models
-
 from icecream_api.models.item_related import Batch, Item
 
 
