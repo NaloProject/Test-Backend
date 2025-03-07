@@ -1,0 +1,238 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Choisissez vos boules de glace</title>
+    <style>
+      /* Global styles */
+      body {
+        font-family: "Roboto", sans-serif;
+        background-color: #f9f9f9;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+      }
+      .container {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        width: 350px;
+        text-align: center;
+        transition: transform 0.3s ease-in-out;
+      }
+      h1 {
+        color: #ff6f61;
+        margin-bottom: 20px;
+        font-size: 1.5em;
+        text-transform: uppercase;
+      }
+      .flavours {
+        margin-bottom: 20px;
+        text-align: left;
+      }
+      .flavours label {
+        display: block;
+        font-size: 1.1em;
+        margin-bottom: 8px;
+        color: #333;
+        padding-left: 10px;
+        margin-top: 10px;
+      }
+      .flavours img {
+        width: 50px;
+        height: 50px;
+        margin-right: 15px;
+        border-radius: 50%;
+        vertical-align: middle;
+      }
+      .parfum-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      input[type="number"] {
+        width: 30px;
+        padding: 12px;
+        border-radius: 5px;
+        border: 2px solid #ff6f61;
+        font-size: 1.1em;
+        text-align: center;
+      }
+      input[type="number"]:focus {
+        border-color: #ff3e2a;
+      }
+      button {
+        width: 100%;
+        padding: 12px;
+        background-color: #ff6f61;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1.2em;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+      button:hover {
+        background-color: #ff3e2a;
+      }
+      button:active {
+        background-color: #ff1a1a;
+      }
+      .footer {
+        font-size: 0.9em;
+        color: #aaa;
+        margin-top: 10px;
+      }
+
+      /* Modale */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0, 0, 0, 0.4);
+        padding-top: 60px;
+      }
+      .modal-content {
+        background-color: #fff;
+        margin: 5% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 400px;
+        border-radius: 8px;
+        text-align: center;
+      }
+      .modal-content h2 {
+        color: #4caf50;
+      }
+      .close {
+        color: #aaa;
+        float: right;
+        font-size: 28px;
+        font-weight: bold;
+      }
+      .close:hover,
+      .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Choisissez vos boules de glace</h1>
+      <form id="iceCreamForm" method="POST">
+        {% csrf_token %}
+        <div class="flavours">
+          {% for parfum in flavours %}
+          <div class="parfum-item">
+            <img
+              src="static/images/{{ parfum.name }}.jpg"
+              alt="{{ parfum.name }}"
+            />
+
+            <label for="{{ parfum.name }}">{{ parfum.name }}</label>
+            <input
+              type="number"
+              id="{{ parfum.name }}"
+              name="{{ parfum.name }}"
+              price="{{ parfum.price }}"
+              min="0"
+              value="0"
+            />
+          </div>
+          {% endfor %}
+        </div>
+        <label for="price">Prix : </label>
+        <label id="priceAmount">0</label>
+        <label>€</label>
+        <button type="submit">Commander</button>
+      </form>
+    </div>
+
+    <!-- Modale -->
+    <div id="myModal" class="modal">
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Votre commande a été passée avec succès !</h2>
+        <p>Identifiant de commande : <strong id="orderId"></strong></p>
+      </div>
+    </div>
+
+    <script>
+      function calculateTotalScoops() {
+        const inputs = document.querySelectorAll('input[type="number"]');
+        let totalScoops = 0;
+        inputs.forEach((input) => {
+          totalScoops +=
+            parseInt(input.value) * input.getAttribute("price") || 0;
+        });
+        document.getElementById("priceAmount").innerText = totalScoops;
+      }
+
+      async function sendOrder(order) {
+        const inputs = document.querySelectorAll('input[type="number"]');
+        let totalScoops = 0;
+        const data = {};
+        inputs.forEach((input) => {
+          data[input.name] = input.value;
+        });
+        console.log(data);
+        const res = await fetch("{{api}}/command/submit", {
+          method: "post",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            "X-CSRFToken": "{{csrf_token}}",
+          },
+          body: JSON.stringify({
+            items_needed: data,
+          }),
+        });
+        const output = await res.json();
+        if (res.ok) {
+          document.getElementById("orderId").innerText = output.identifier;
+          document.getElementById("myModal").style.display = "block";
+        } else {
+          alert("Certaines boules ne sont plus disponibles, revenez plus tard");
+        }
+      }
+
+      // Fermer la modale
+      document.querySelector(".close").addEventListener("click", function () {
+        document.getElementById("myModal").style.display = "none";
+      });
+
+      document
+        .getElementById("iceCreamForm")
+        .addEventListener("input", calculateTotalScoops);
+
+      document
+        .getElementById("iceCreamForm")
+        .addEventListener("submit", function (event) {
+          const inputs = document.querySelectorAll('input[type="number"]');
+          const isValid = Array.from(inputs).some(
+            (input) => parseInt(input.value) > 0
+          );
+          event.preventDefault();
+          if (!isValid) {
+            alert("Veuillez choisir au moins une boule de glace.");
+            return;
+          }
+          sendOrder();
+        });
+    </script>
+  </body>
+</html>
