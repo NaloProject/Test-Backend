@@ -6,10 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Choisissez vos boules de glace</title>
     <style>
-      /* Global styles */
       body {
         font-family: "Roboto", sans-serif;
-        background-color: #f9f9f9;
+        background: linear-gradient(135deg, #f9f9f9, #ffdde1);
         margin: 0;
         padding: 0;
         display: flex;
@@ -90,7 +89,6 @@
         margin-top: 10px;
       }
 
-      /* Modale */
       .modal {
         display: none;
         position: fixed;
@@ -210,7 +208,6 @@
         }
       }
 
-      // Fermer la modale
       document.querySelector(".close").addEventListener("click", function () {
         document.getElementById("myModal").style.display = "none";
       });

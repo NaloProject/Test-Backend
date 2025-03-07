@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Administration des stocks</title>
     <style>
-      /* Style général */
       body {
         font-family: Arial, sans-serif;
         background-color: #f4f4f9;
@@ -13,7 +12,6 @@
         padding: 0;
       }
 
-      /* En-tête */
       h1 {
         text-align: center;
         color: #333;
@@ -22,7 +20,6 @@
         margin: 0;
       }
 
-      /* Formulaire */
       form {
         text-align: center;
         margin-top: 20px;
@@ -43,7 +40,6 @@
         background-color: #45a049;
       }
 
-      /* Section des stocks */
       h2 {
         color: #333;
         text-align: center;
@@ -83,14 +79,12 @@
         background-color: #f57c00;
       }
 
-      /* Section des commandes */
       h2 {
         color: #333;
         text-align: center;
         margin-top: 40px;
       }
 
-      /* Style de la table */
       table {
         width: 80%;
         margin: 20px auto;
@@ -119,7 +113,6 @@
         background-color: #f1f1f1;
       }
 
-      /* Média queries pour la responsivité */
       @media (max-width: 768px) {
         h1,
         h2 {
@@ -175,7 +168,9 @@
           <th>Commande</th>
           <th>Demande</th>
           <th>Prix</th>
+          {% comment %}
           <th>Date</th>
+          {% endcomment %}
           <th>Validée</th>
         </tr>
       </thead>
@@ -185,7 +180,9 @@
           <td>{{ commande.identifier }}</td>
           <td>{{ commande.items_needed }}</td>
           <td>{{ commande.price }}</td>
+          {% comment %}
           <td>{{ commande.created_at }}</td>
+          {% endcomment %}
           <td>{{ commande.status }}</td>
         </tr>
         {% endfor %}
@@ -193,7 +190,6 @@
     </table>
 
     <script>
-      console.log("{{api}}" + "/refill?batch=");
       async function refill(batch) {
         const res = await fetch("{{api}}/batch/refill/" + batch);
 
