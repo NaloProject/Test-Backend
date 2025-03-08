@@ -112,7 +112,7 @@
         text-align: center;
       }
       .modal-content h2 {
-        color: #4caf50;
+        color: rgb(181, 67, 69);
       }
       .close {
         color: #aaa;
@@ -204,7 +204,23 @@
           document.getElementById("orderId").innerText = output.identifier;
           document.getElementById("myModal").style.display = "block";
         } else {
-          alert("Certaines boules ne sont plus disponibles, revenez plus tard");
+          const errorModal = document.createElement("div");
+          errorModal.classList.add("modal");
+          errorModal.innerHTML = `
+            <div class="modal-content">
+              <span class="close">&times;</span>
+              <h2>Une erreur est survenue</h2>
+              <p>Certaines boules ne sont plus disponibles, revenez plus tard.</p>
+            </div>`;
+          document.body.appendChild(errorModal);
+          errorModal.style.display = "block";
+
+          errorModal
+            .querySelector(".close")
+            .addEventListener("click", function () {
+              errorModal.style.display = "none";
+              document.body.removeChild(errorModal);
+            });
         }
       }
 
@@ -225,7 +241,23 @@
           );
           event.preventDefault();
           if (!isValid) {
-            alert("Veuillez choisir au moins une boule de glace.");
+            const errorModal = document.createElement("div");
+            errorModal.classList.add("modal");
+            errorModal.innerHTML = `
+              <div class="modal-content">
+                <span class="close">&times;</span>
+                <h2>Erreur</h2>
+                <p>Veuillez choisir au moins une boule de glace.</p>
+              </div>`;
+            document.body.appendChild(errorModal);
+            errorModal.style.display = "block";
+
+            errorModal
+              .querySelector(".close")
+              .addEventListener("click", function () {
+                errorModal.style.display = "none";
+                document.body.removeChild(errorModal);
+              });
             return;
           }
           sendOrder();
