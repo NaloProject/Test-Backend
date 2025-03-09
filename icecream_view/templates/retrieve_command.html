@@ -23,11 +23,8 @@
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
         width: 350px;
         text-align: center;
-        transition: transform 0.3s ease;
       }
-      .container:hover {
-        transform: translateY(-5px);
-      }
+
       h1 {
         color: #ff6f61;
         margin-bottom: 20px;
@@ -45,12 +42,11 @@
       input[type="text"] {
         width: 70%;
         padding: 12px;
-        border-radius: 20px;
+        border-radius: 5px;
         border: 2px solid #ff6f61;
         font-size: 1.1em;
         text-align: center;
         margin-bottom: 20px;
-        transition: all 0.3s ease;
       }
       input[type="text"]:focus {
         border-color: #ff3e2a;
@@ -63,19 +59,17 @@
         background-color: #ff6f61;
         color: white;
         border: none;
-        border-radius: 30px;
+        border-radius: 5px;
         font-size: 1.2em;
         cursor: pointer;
         transition: background-color 0.3s ease, transform 0.2s ease;
       }
-      button:hover {
-        background-color: #ff3e2a;
-        transform: translateY(-3px);
+      .take-command {
+        background: none;
+        border: 1px solid #289bff;
+        color: #289bff;
       }
-      button:active {
-        background-color: #ff1a1a;
-        transform: translateY(1px);
-      }
+
       .ice-cream {
         margin-top: 30px;
         display: flex;
@@ -90,20 +84,8 @@
         border-radius: 50%;
         margin: 5px;
         opacity: 0;
-        animation: bounce 0.8s forwards;
       }
-      .ice-cream .ball.chocolate {
-        background-color: #3e1f1d;
-      }
-      .ice-cream .ball.vanilla {
-        background-color: #f3e9c5;
-      }
-      .ice-cream .ball.strawberry {
-        background-color: #ff4f70;
-      }
-      .ice-cream .ball.cherry {
-        background-color: rgb(214, 128, 144);
-      }
+
       @keyframes bounce {
         0% {
           transform: scale(0);
@@ -140,8 +122,14 @@
       </form>
       <div id="iceCreamDisplay" class="ice-cream"></div>
       <div id="errorMessage" class="error-message"></div>
+      <button id="takeCommand" class="take-command" onclick="">
+        Passer une commande
+      </button>
     </div>
     <script>
+      document.getElementById("takeCommand").onclick = function () {
+        location.href = "/";
+      };
       document
         .getElementById("orderForm")
         .addEventListener("submit", async function (event) {

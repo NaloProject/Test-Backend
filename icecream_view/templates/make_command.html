@@ -76,13 +76,14 @@
         font-size: 1.2em;
         cursor: pointer;
         transition: background-color 0.3s ease;
+        margin: 5px;
       }
-      button:hover {
-        background-color: #ff3e2a;
+      .get-command {
+        background: none;
+        border: 1px solid #289bff;
+        color: #289bff;
       }
-      button:active {
-        background-color: #ff1a1a;
-      }
+
       .footer {
         font-size: 0.9em;
         color: #aaa;
@@ -156,11 +157,14 @@
         <label for="price">Prix : </label>
         <label id="priceAmount">0</label>
         <label>€</label>
+        <br />
         <button type="submit">Commander</button>
       </form>
+      <button id="getCommand" class="get-command">
+        Récupérer une commande
+      </button>
     </div>
 
-    <!-- Modale -->
     <div id="myModal" class="modal">
       <div class="modal-content">
         <span class="close">&times;</span>
@@ -223,7 +227,9 @@
             });
         }
       }
-
+      document.getElementById("getCommand").onclick = function () {
+        location.href = "/retrieve/";
+      };
       document.querySelector(".close").addEventListener("click", function () {
         document.getElementById("myModal").style.display = "none";
       });
