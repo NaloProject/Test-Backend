@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Administration des stocks</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f9;
+        margin: 0;
+        padding: 0;
+      }
+
+      h1 {
+        text-align: center;
+        color: #333;
+        background-color: #4caf50;
+        padding: 20px;
+        margin: 0;
+      }
+
+      form {
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      button {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+        border-radius: 5px;
+        transition: background-color 0.3s;
+      }
+
+      button:hover {
+        background-color: #45a049;
+      }
+
+      h2 {
+        color: #333;
+        text-align: center;
+        margin-top: 40px;
+      }
+
+      .stock-container {
+        display: flex;
+        justify-content: space-around;
+        margin: 20px;
+      }
+
+      .stock {
+        background-color: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        width: 18%;
+      }
+
+      .stock h3 {
+        color: #333;
+      }
+
+      .stock .level {
+        font-size: 20px;
+        margin: 10px 0;
+        color: #4caf50;
+      }
+
+      .stock button {
+        background-color: #ff9800;
+      }
+
+      .stock button:hover {
+        background-color: #f57c00;
+      }
+
+      h2 {
+        color: #333;
+        text-align: center;
+        margin-top: 40px;
+      }
+
+      table {
+        width: 80%;
+        margin: 20px auto;
+        border-collapse: collapse;
+        background-color: white;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      th,
+      td {
+        padding: 15px;
+        text-align: left;
+        border: 1px solid #ddd;
+      }
+
+      th {
+        background-color: #4caf50;
+        color: white;
+      }
+
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+
+      tr:hover {
+        background-color: #f1f1f1;
+      }
+
+      @media (max-width: 768px) {
+        h1,
+        h2 {
+          font-size: 24px;
+        }
+
+        button {
+          width: 100%;
+          font-size: 18px;
+        }
+
+        table {
+          width: 100%;
+        }
+
+        th,
+        td {
+          font-size: 14px;
+        }
+
+        .stock-container {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .stock {
+          width: 80%;
+          margin-bottom: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Administration des stocks</h1>
+
+    <h2>Stocks disponibles</h2>
+    <div class="stock-container">
+      {% for batch in batchs %}
+      <div class="stock">
+        <h3>{{batch.name}}</h3>
+        <p class="level">{{batch.stock}}</p>
+        <button type="button" onclick="refill('{{batch.name}}')">
+          Remplir
+        </button>
+      </div>
+      {% endfor %}
+    </div>
+
+    <h2>Commandes passées ({{totalAmount}}€):</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Commande</th>
+          <th>Demande</th>
+          <th>Prix</th>
+          {% comment %}
+          <th>Date</th>
+          {% endcomment %}
+          <th>Validée</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for commande in commands %}
+        <tr>
+          <td>{{ commande.identifier }}</td>
+          <td>{{ commande.items_needed }}</td>
+          <td>{{ commande.price }}</td>
+          {% comment %}
+          <td>{{ commande.created_at }}</td>
+          {% endcomment %}
+          <td>{{ commande.status }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    <script>
+      async function refill(batch) {
+        const res = await fetch("{{api}}/batch/refill/" + batch);
+
+        if (res.ok) {
+          window.location.reload();
+        } else {
+          alert("Une erreur est survenue, contactez le service IT.");
+        }
+      }
+    </script>
+  </body>
+</html>

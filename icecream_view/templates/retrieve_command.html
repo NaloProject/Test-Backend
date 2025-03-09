@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vérifier votre commande de glace</title>
+    <style>
+      body {
+        font-family: "Roboto", sans-serif;
+        background: linear-gradient(135deg, #f9f9f9, #ffdde1);
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        color: #333;
+      }
+      .container {
+        background-color: #fff;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+        width: 350px;
+        text-align: center;
+      }
+
+      h1 {
+        color: #ff6f61;
+        margin-bottom: 20px;
+        font-size: 1.8em;
+        text-transform: uppercase;
+        letter-spacing: 1.2px;
+      }
+      .flavours img {
+        width: 50px;
+        height: 50px;
+        margin-right: 15px;
+        border-radius: 50%;
+        vertical-align: middle;
+      }
+      input[type="text"] {
+        width: 70%;
+        padding: 12px;
+        border-radius: 5px;
+        border: 2px solid #ff6f61;
+        font-size: 1.1em;
+        text-align: center;
+        margin-bottom: 20px;
+      }
+      input[type="text"]:focus {
+        border-color: #ff3e2a;
+        outline: none;
+        box-shadow: 0 0 8px rgba(255, 62, 42, 0.5);
+      }
+      button {
+        width: 100%;
+        padding: 15px;
+        background-color: #ff6f61;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1.2em;
+        cursor: pointer;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+      }
+      .take-command {
+        background: none;
+        border: 1px solid #289bff;
+        color: #289bff;
+      }
+
+      .ice-cream {
+        margin-top: 30px;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .ice-cream .ball {
+        display: inline-block;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        margin: 5px;
+        opacity: 0;
+      }
+
+      @keyframes bounce {
+        0% {
+          transform: scale(0);
+          opacity: 0;
+        }
+        50% {
+          transform: scale(1.1);
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+      .error-message {
+        color: #ff4f70;
+        margin-top: 20px;
+        font-size: 1.1em;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Regardez votre commande</h1>
+      <form id="orderForm">
+        <label for="orderNumber">Numéro de commande :</label>
+        <input
+          type="text"
+          id="orderNumber"
+          required
+          placeholder="Entrez votre numéro"
+        />
+        <button type="submit">Afficher la commande</button>
+      </form>
+      <div id="iceCreamDisplay" class="ice-cream"></div>
+      <div id="errorMessage" class="error-message"></div>
+      <button id="takeCommand" class="take-command" onclick="">
+        Passer une commande
+      </button>
+    </div>
+    <script>
+      document.getElementById("takeCommand").onclick = function () {
+        location.href = "/";
+      };
+      document
+        .getElementById("orderForm")
+        .addEventListener("submit", async function (event) {
+          event.preventDefault();
+          const reference = document.getElementById("orderNumber").value;
+          if (reference < 1) {
+            document.getElementById("errorMessage").innerText =
+              "Veuillez entrer une référence de commande valide.";
+            return;
+          }
+          const response = await fetch("{{api}}/command/" + reference);
+          if (response.ok) {
+            const command = await response.json();
+            const scoops_needed = command.items_needed;
+            const iceCreamBalls = [];
+            for (const elt of Object.keys(scoops_needed)) {
+              const count = parseInt(scoops_needed[elt]);
+              iceCreamBalls.push(...Array(count).fill(elt));
+            }
+            const iceCreamDisplay = document.getElementById("iceCreamDisplay");
+            iceCreamDisplay.innerHTML = iceCreamBalls
+              .sort(() => Math.random() - 0.5)
+              .map(
+                (ball) => `<div class="flavours"><img
+              src="../static/images/${ball}.jpg"
+              alt="${ball}"
+            /></div>`
+              )
+              .join("");
+            document.getElementById("errorMessage").innerText = "";
+          } else {
+            document.getElementById("iceCreamDisplay").innerText = "";
+            document.getElementById("errorMessage").innerText =
+              "Erreur : Impossible de récupérer les informations pour ce numéro de commande.";
+          }
+        });
+    </script>
+  </body>
+</html>
